@@ -1,0 +1,51 @@
+/ -- Main --
+     ORG 100
+     BSA GIN /Subroutine 1
+     BSA ATB /Subroutine 2
+     HLT
+
+/ -- Get Input Subroutine -- 1
+GIN, HEX 0
+FST, SKI
+     BUN FST
+     INP
+     STA D1
+SCD, SKI
+     BUN SCD
+     INP
+     STA D2
+     CLA
+     BUN GIN I
+
+/ -- ASCII to Binary Subroutine -- 2
+ATB, HEX 0
+     LDA D1
+     ADD S48
+     STA D1
+     LDA D2
+     ADD S48
+     STA D2
+     LDA D1
+     CMA
+     INC
+     STA D1C
+     SZA
+     BUN LP1
+     BUN NXT
+LP1, LDA NUM
+     ADD A10
+     STA NUM
+     ISZ D1C
+     BUN LP1
+NXT, LDA NUM
+     ADD D2
+     STA NUM
+     BUN ATB I
+D1,  DEC 0
+D1C, DEC 0
+D2,  DEC 0
+S48, DEC -48
+A10, DEC 10
+
+NUM, DEC 0
+     END
