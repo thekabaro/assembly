@@ -14,38 +14,38 @@
 GIN, HEX 0
 FST, SKI
      BUN FST
-     INP
+     INP            /Get 1st input
      STA D1
 SCD, SKI
      BUN SCD
-     INP
+     INP            /Get 2nd input
      STA D2
      CLA
      BUN GIN I
 
 / -- ASCII to HEX Subroutine -- 2
 ATH, HEX 0
-     LDA D1
+     LDA D1         /Load 1st digit
      ADD S48
      STA D1
-     LDA D2
+     LDA D2         /Load 2nd digit
      ADD S48
      STA D2
-     LDA D1
+     LDA D1         /Make negative
      CMA
      INC
      STA D1C
      SZA
      BUN LP1
      BUN NX1
-LP1, LDA NUM
+LP1, LDA NUM        /Multiply 10 by num in 10s place
      ADD A10
      STA NUM
      ISZ D1C
      BUN LP1
 NX1, LDA NUM
      ADD D2
-     STA NUM
+     STA NUM        /Store result in NUM
      CLA
      BUN ATH I
 D1,  DEC 0
@@ -57,7 +57,7 @@ A10, DEC 10
 / -- Calculate Total Sum Subroutine -- 3
 CTS, HEX 0
      LDA NUM
-     STA NMT
+     STA NMT        /Complement NUM
      CMA
      INC
      STA NC1
@@ -65,9 +65,9 @@ CTS, HEX 0
      SZA
      BUN LP2
      BUN NX2
-LP2, LDA SUM
+LP2, LDA SUM        /Add every num <= original NUM
      ADD NMT
-     STA SUM
+     STA SUM        /Store in sum
      LDA NMT
      ADD SN1
      STA NMT
@@ -82,31 +82,31 @@ SN1, DEC -1
 / -- Calculate Mean Subroutine -- 4
 CTM, HEX 0
      LDA NUM
-     CMA
+     CMA             /2s complement
      INC
      STA NC2
      SZA
      BUN LP3
      BUN NX5
-LP3, LDA SUM
+LP3, LDA SUM         /Dicide by the num
      ADD NC2
      STA SUM
      SNA
      BUN NX6
      BUN NX4
 NX6, LDA RES
-     INC
+     INC             /Increment the result
      STA RES
      LDA SUM
      SZA
      BUN NX3
      BUN NX4
-NX3, SNA
+NX3, SNA             /Skip if negative
      BUN LP3
 NX4, SNA
      BUN NX5
      LDA REM
-     ADD AD5
+     ADD AD5         /Make the remainder 5 if final sum is neg
      STA REM
 NX5, CLA
      BUN CTM I
@@ -120,66 +120,64 @@ HTA, HEX 0
      LDA RES
      STA RST
      ADD S10
-     SNA
+     SNA             /Check if result is 1 digit
      BUN NX7
      LDA RST
      ADD A48
      STA C2
      BUN NX8
-
 NX7, CLE
-LP4, LDA RST
+LP4, LDA RST         /Keep dividing by 10
      ADD S10
      STA RST
      SNA
      BUN NX9
      BUN NXB
 NX9, LDA NRS
-     INC
+     INC             /Increment the result
      STA NRS
      LDA RST
      SZA
      BUN NX0
-     BUN NXB
+     BUN NXC
 NX0, SNA
      BUN LP4
 NXB, LDA RST
-     CMA
-     INC
+     ADD FIX         /Add 10 to neg number
+     STA RST
+NXC, LDA RST
      ADD A48
-     STA C2
+     STA C2          /Store as 2nd digit
      LDA NRS
      ADD A48
-     STA C1
-     
-
+     STA C1          /Store as 1st digit
 NX8, LDA REM
      ADD A48
-     STA C4
+     STA C4          /Store as last digit
      CLA
      BUN HTA I
-
-/ -- Output the Result Subroutine -- 6
-OPR, HEX 0
-     LDA C1
-     OUT
-     LDA C2
-     OUT
-     LDA C3
-     OUT
-     LDA C4
-     OUT
-     BUN OPR I
-
 S10, DEC -10
 RST, DEC 0
-C1,  DEC 0
-C2,  DEC 0
-C3,  DEC 46
-C4,  DEC 0
 A48, DEC 48
+FIX, DEC 10
 NRS, DEC 0
 NRM, DEC 0
 RES, DEC 0
 REM, DEC 0
+
+/ -- Output the Result Subroutine -- 6
+OPR, HEX 0
+     LDA C1
+     OUT             /Output 1st char
+     LDA C2
+     OUT             /Output 2nd char
+     LDA C3
+     OUT             /Output 3rd char
+     LDA C4
+     OUT             /Output 4th char
+     BUN OPR I
+C1,  DEC 0
+C2,  DEC 0
+C3,  DEC 46
+C4,  DEC 0
      END
