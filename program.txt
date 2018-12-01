@@ -1,7 +1,13 @@
+/ Michael Jarriel 11/30/2018
+
 / -- Main --
      ORG 100
-     BSA GIN /Subroutine 1
-     BSA ATB /Subroutine 2
+     BSA GIN /Subroutine 1 (Get Input)
+     BSA ATH /Subroutine 2 (ASCII to HEX)
+     BSA CTS /Subroutine 3 (Calculate Sum)
+     BSA CTM /Subroutine 4 (Calculate Mean)
+     BSA HTA /Subroutine 5 (HEX to ASCII)
+     BSA OPR /Subroutine 6 (Output Result)
      HLT
 
 / -- Get Input Subroutine -- 1
@@ -17,8 +23,8 @@ SCD, SKI
      CLA
      BUN GIN I
 
-/ -- ASCII to Binary Subroutine -- 2
-ATB, HEX 0
+/ -- ASCII to HEX Subroutine -- 2
+ATH, HEX 0
      LDA D1
      ADD S48
      STA D1
@@ -31,21 +37,149 @@ ATB, HEX 0
      STA D1C
      SZA
      BUN LP1
-     BUN NXT
+     BUN NX1
 LP1, LDA NUM
      ADD A10
      STA NUM
      ISZ D1C
      BUN LP1
-NXT, LDA NUM
+NX1, LDA NUM
      ADD D2
      STA NUM
-     BUN ATB I
+     CLA
+     BUN ATH I
 D1,  DEC 0
 D1C, DEC 0
 D2,  DEC 0
 S48, DEC -48
 A10, DEC 10
 
+/ -- Calculate Total Sum Subroutine -- 3
+CTS, HEX 0
+     LDA NUM
+     STA NMT
+     CMA
+     INC
+     STA NC1
+     LDA NUM
+     SZA
+     BUN LP2
+     BUN NX2
+LP2, LDA SUM
+     ADD NMT
+     STA SUM
+     LDA NMT
+     ADD SN1
+     STA NMT
+     ISZ NC1
+     BUN LP2
+     CLA
+NX2, BUN CTS I
+NC1, DEC 0
+NMT, DEC 0
+SN1, DEC -1
+
+/ -- Calculate Mean Subroutine -- 4
+CTM, HEX 0
+     LDA NUM
+     CMA
+     INC
+     STA NC2
+     SZA
+     BUN LP3
+     BUN NX5
+LP3, LDA SUM
+     ADD NC2
+     STA SUM
+     SNA
+     BUN NX6
+     BUN NX4
+NX6, LDA RES
+     INC
+     STA RES
+     LDA SUM
+     SZA
+     BUN NX3
+     BUN NX4
+NX3, SNA
+     BUN LP3
+NX4, SNA
+     BUN NX5
+     LDA REM
+     ADD AD5
+     STA REM
+NX5, CLA
+     BUN CTM I
 NUM, DEC 0
+NC2, DEC 0
+SUM, DEC 0
+AD5, DEC 5
+
+/ -- HEX to ASCII Subroutine -- 5
+HTA, HEX 0
+     LDA RES
+     STA RST
+     ADD S10
+     SNA
+     BUN NX7
+     LDA RST
+     ADD A48
+     STA C2
+     BUN NX8
+
+NX7, CLE
+LP4, LDA RST
+     ADD S10
+     STA RST
+     SNA
+     BUN NX9
+     BUN NXB
+NX9, LDA NRS
+     INC
+     STA NRS
+     LDA RST
+     SZA
+     BUN NX0
+     BUN NXB
+NX0, SNA
+     BUN LP4
+NXB, LDA RST
+     CMA
+     INC
+     ADD A48
+     STA C2
+     LDA NRS
+     ADD A48
+     STA C1
+     
+
+NX8, LDA REM
+     ADD A48
+     STA C4
+     CLA
+     BUN HTA I
+
+/ -- Output the Result Subroutine -- 6
+OPR, HEX 0
+     LDA C1
+     OUT
+     LDA C2
+     OUT
+     LDA C3
+     OUT
+     LDA C4
+     OUT
+     BUN OPR I
+
+S10, DEC -10
+RST, DEC 0
+C1,  DEC 0
+C2,  DEC 0
+C3,  DEC 46
+C4,  DEC 0
+A48, DEC 48
+NRS, DEC 0
+NRM, DEC 0
+RES, DEC 0
+REM, DEC 0
      END
